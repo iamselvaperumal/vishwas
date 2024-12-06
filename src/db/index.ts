@@ -1,0 +1,28 @@
+import { drizzle } from 'drizzle-orm/postgres-js'
+
+// import { migrate } from 'drizzle-orm/postgres-js/migrator'
+import postgres from 'postgres'
+
+import { env } from '@/utils/env.mjs'
+
+import * as schema from './schema'
+
+if (!env.DATABASE_URL) {
+  console.log('🔴 Cannot find database url')
+}
+
+const client = postgres(env.DATABASE_URL as string, { max: 1 })
+const db = drizzle(client, { schema: schema, logger: true })
+
+// const migrateDB = async () => {
+//   try {
+//     console.log('🟠 Migrating client')
+//     await migrate(db, { migrationsFolder: '../../drizzle' })
+//     console.log('🟢 Successfully migrated')
+//   } catch (error) {
+//     console.log('🔴 Error migrating client', error)
+//   }
+// }
+// migrateDB()
+
+export default db
