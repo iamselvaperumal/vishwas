@@ -1,5 +1,5 @@
 {
-  "id": "fdf7ebac-bfa5-4aa1-8c5e-092a0c1d2205",
+  "id": "4aefbfc4-05c8-4105-a5ab-d31ca310e3f0",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -266,17 +266,10 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false,
-          "default": "'user'"
+          "default": "'farmer'"
         },
         "email_verified": {
           "name": "email_verified",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "user_approved": {
-          "name": "user_approved",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,

@@ -49,7 +49,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <QueryProvider>
               <PatientProvider>{children}</PatientProvider>
-              <Toaster richColors expand position="top-center" />
+              <Toaster richColors expand position="bottom-right" />
             </QueryProvider>
           </ThemeProvider>
         </body>

@@ -16,14 +16,29 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { client } from "@/server/client";
-import { ArrowLeft, Eye, EyeSlash } from "@phosphor-icons/react";
+import {
+  ArrowLeft,
+  Eye,
+  EyeSlash,
+  HandCoins,
+  Tractor,
+} from "@phosphor-icons/react";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -32,9 +47,15 @@ export default function RegisterForm() {
   const signUpForm = useForm<z.infer<typeof registrationSchema>>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
+      name: "",
+      phone: "",
       email: "",
+      aadhaar: "",
+      landRegistrationNumber: "",
+      address: "",
       password: "",
       confirmPassword: "",
+      role: undefined,
     },
   });
 
@@ -68,9 +89,9 @@ export default function RegisterForm() {
       <div className="absolute right-8 top-8 flex items-center gap-2">
         <ThemeToggle />
       </div>
-      <div className="flex h-svh w-svw items-center justify-center">
-        <div className="flex min-w-[400px] flex-col gap-4">
-          <h1 className="text-2xl font-bold">Create your Vishwas account</h1>
+      <div className="flex w-full justify-center py-[150px]">
+        <div className="flex min-w-[650px] flex-col gap-4">
+          <h1 className="text-3xl font-black">Create your Vishwas account</h1>
           <p className="mb-3">
             Already have an account?{" "}
             <Link href="/auth/login" className="text-blue-500">
@@ -83,14 +104,107 @@ export default function RegisterForm() {
               onSubmit={signUpForm.handleSubmit(onSubmit)}
               className="flex flex-col gap-4"
             >
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-6">
+                  <FormField
+                    control={signUpForm.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Tamil" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="col-span-6">
+                  <FormField
+                    control={signUpForm.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="john.doe@example.com"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
               <FormField
                 control={signUpForm.control}
-                name="email"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Role</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="farmer">
+                          <div className="flex items-center">
+                            <Tractor
+                              size={20}
+                              weight="duotone"
+                              className="mr-2"
+                            />
+                            Farmer
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="consumer">
+                          <div className="flex items-center">
+                            <HandCoins
+                              size={20}
+                              weight="duotone"
+                              className="mr-2"
+                            />
+                            Consumer
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={signUpForm.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      <Input placeholder="john.doe@example.com" {...field} />
+                      <Input placeholder="9876543210" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Do not add +91 in beginning
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={signUpForm.control}
+                name="aadhaar"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Aadhaar ID</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123456789101" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -98,29 +212,12 @@ export default function RegisterForm() {
               />
               <FormField
                 control={signUpForm.control}
-                name="password"
+                name="landRegistrationNumber"
                 render={({ field }) => (
-                  <FormItem className="relative">
-                    <FormLabel>Password</FormLabel>
+                  <FormItem>
+                    <FormLabel>Land Registration Number</FormLabel>
                     <FormControl>
-                      <>
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••••••"
-                          {...field}
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-3 top-[44px] -translate-y-1/2 transform"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <Eye size={20} />
-                          ) : (
-                            <EyeSlash size={20} />
-                          )}
-                        </button>
-                      </>
+                      <Input placeholder="TN/SALEM/0123/A/1234" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,23 +225,76 @@ export default function RegisterForm() {
               />
               <FormField
                 control={signUpForm.control}
-                name="confirmPassword"
+                name="address"
                 render={({ field }) => (
-                  <FormItem className="relative">
-                    <FormLabel>Confirm Password</FormLabel>
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
                     <FormControl>
-                      <>
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••••••"
-                          {...field}
-                        />
-                      </>
+                      <Textarea
+                        placeholder={`123 , Gandhi Road, Anna Nagar, 
+Salem, Tamil Nadu 636005`}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-6">
+                  <FormField
+                    control={signUpForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem className="relative">
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <>
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••••••"
+                              {...field}
+                            />
+                            <button
+                              type="button"
+                              className="absolute right-3 top-[44px] -translate-y-1/2 transform"
+                              onClick={() => setShowPassword(!showPassword)}
+                            >
+                              {showPassword ? (
+                                <Eye size={20} />
+                              ) : (
+                                <EyeSlash size={20} />
+                              )}
+                            </button>
+                          </>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="col-span-6">
+                  <FormField
+                    control={signUpForm.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem className="relative">
+                        <FormLabel>Confirm Password</FormLabel>
+                        <FormControl>
+                          <>
+                            <Input
+                              type={showPassword ? "text" : "password"}
+                              placeholder="••••••••••••"
+                              {...field}
+                            />
+                          </>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
               <Button
                 type="submit"
                 className="mt-4"

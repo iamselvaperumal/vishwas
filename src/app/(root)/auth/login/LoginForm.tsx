@@ -80,9 +80,9 @@ export default function LoginForm() {
       <div className="absolute right-8 top-8 flex items-center gap-2">
         <ThemeToggle />
       </div>
-      <div className="flex h-svh w-svw items-center justify-center">
-        <div className="flex min-w-[400px] flex-col gap-4">
-          <h1 className="text-2xl font-bold">Sign into Vishwas</h1>
+      <div className="flex w-full justify-center py-[150px]">
+        <div className="flex min-w-[650px] flex-col gap-4">
+          <h1 className="text-3xl font-black">Sign into Vishwas</h1>
           <p className="mb-3">
             Don{"'"}t have an account?{" "}
             <Link href="/auth/register" className="text-blue-500">
