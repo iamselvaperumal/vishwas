@@ -1,14 +1,21 @@
-import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 
 import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 
 import db from "@/db";
 import { registrationSchema } from "@/validators/auth.schema";
 import { Argon2id } from "oslo/password";
 
 import { EmailTemplate, sendMail } from "@/lib/email";
+import { RegistrationStatus } from "@/types/auth";
 import { generateEmailVerificationCode } from "@/utils/utils.server";
+
+const registrationResponseSchema = z.object({
+  status: z.nativeEnum(RegistrationStatus),
+  message: z.string(),
+  userId: z.string().optional(),
+});
 
 export const sendRegistrationCode = new OpenAPIHono<{
   // Variables: ContextVariables
@@ -29,13 +36,12 @@ export const sendRegistrationCode = new OpenAPIHono<{
                 email: "example@example.com",
                 password: "password123",
                 confirmPassword: "password123",
-                name: "John Doe",
+                name: "John Farmer",
                 role: "farmer",
                 phone: "9876543210",
                 aadhaar: "123456789012",
-                address:
-                  "123 , Gandhi Road, Anna Nagar, Salem, Tamil Nadu 636005",
-                landRegistrationNumber: "TN/SALEM/0123/A/1234",
+                address: "123, Green Fields, Rural Area, State 636005",
+                landRegistrationNumber: "STATE/DISTRICT/0123/LAND/4567",
               },
             }),
           },
@@ -46,12 +52,20 @@ export const sendRegistrationCode = new OpenAPIHono<{
     responses: {
       200: {
         description: "Successfully sent verification code",
+        content: {
+          "application/json": {
+            schema: registrationSchema.openapi("Registration Response"),
+          },
+        },
+      },
+      400: {
+        description: "Registration failed due to validation or existing user",
       },
       401: {
-        description: "Unauthorized",
+        description: "Unauthorized access",
       },
       500: {
-        description: "Internal Server Error",
+        description: "Internal Server Error during registration",
       },
     },
   }),
@@ -72,27 +86,79 @@ export const sendRegistrationCode = new OpenAPIHono<{
       let existingUser;
       try {
         existingUser = await db.query.users.findFirst({
-          where: eq(users.email, email),
+          where: or(
+            eq(users.email, email),
+            eq(users.phone, phone),
+            eq(users.aadhaar, aadhaar),
+            eq(users.landRegistrationNumber, landRegistrationNumber)
+          ),
         });
       } catch (error) {
         return c.json(
-          { error: `Database error while checking existing user: ${error}` },
+          {
+            status: RegistrationStatus.DATABASE_ERROR,
+            message: `Database check failed: ${error}`,
+          },
           500
         );
       }
 
-      if (existingUser && existingUser.emailVerified) {
-        return c.json(
-          { message: "Email already registered and verified" },
-          400
-        );
+      if (existingUser) {
+        if (existingUser.email === email) {
+          if (existingUser.emailVerified) {
+            return c.json(
+              {
+                status: RegistrationStatus.EMAIL_ALREADY_REGISTERED,
+                message: "Email is already registered and verified",
+              },
+              400
+            );
+          }
+          return c.json(
+            {
+              status: RegistrationStatus.EMAIL_ALREADY_REGISTERED,
+              message: "Email is already registered but not verified",
+            },
+            400
+          );
+        }
+
+        if (existingUser.phone === phone) {
+          return c.json(
+            {
+              status: RegistrationStatus.PHONE_ALREADY_REGISTERED,
+              message: "Phone number is already in use",
+            },
+            400
+          );
+        }
+
+        if (existingUser.aadhaar === aadhaar) {
+          return c.json(
+            {
+              status: RegistrationStatus.AADHAAR_ALREADY_REGISTERED,
+              message: "Aadhaar number is already registered",
+            },
+            400
+          );
+        }
+
+        if (existingUser.landRegistrationNumber === landRegistrationNumber) {
+          return c.json(
+            {
+              status: RegistrationStatus.LAND_REGISTRATION_ALREADY_USED,
+              message: "Land registration number is already in use",
+            },
+            400
+          );
+        }
       }
 
       const hashedPassword = await new Argon2id().hash(password);
 
       let userId: string;
-      if (!existingUser) {
-        try {
+      try {
+        if (!existingUser) {
           const result = await db
             .insert(users)
             .values({
@@ -109,15 +175,29 @@ export const sendRegistrationCode = new OpenAPIHono<{
             .returning({ insertedUserId: users.id });
 
           userId = result[0].insertedUserId;
-        } catch (error) {
-          return c.json(
-            { error: `Database error while creating new user: ${error}` },
-            500
-          );
+        } else {
+          userId = existingUser.id;
+          await db
+            .update(users)
+            .set({
+              name,
+              phone,
+              aadhaar,
+              landRegistrationNumber,
+              address,
+              hashedPassword,
+              emailVerified: false,
+            })
+            .where(eq(users.id, userId));
         }
-      } else {
-        userId = existingUser.id;
-        console.log(`Using existing user ID: ${userId}`);
+      } catch (error) {
+        return c.json(
+          {
+            status: RegistrationStatus.DATABASE_ERROR,
+            message: `User registration failed: ${error}`,
+          },
+          500
+        );
       }
 
       let code: string;
@@ -126,7 +206,10 @@ export const sendRegistrationCode = new OpenAPIHono<{
         console.log(`Email verification code generated: ${code}`);
       } catch (error) {
         return c.json(
-          { error: `Error generating email verification code: ${error}` },
+          {
+            status: RegistrationStatus.VERIFICATION_CODE_GENERATION_FAILED,
+            message: `Verification code generation failed: ${error}`,
+          },
           500
         );
       }
@@ -139,20 +222,33 @@ export const sendRegistrationCode = new OpenAPIHono<{
         console.log(`Email sending attempt completed. Success: ${success}`);
       } catch (error) {
         return c.json(
-          { error: `Error occurred while sending email: ${error}` },
+          {
+            status: RegistrationStatus.EMAIL_SEND_FAILED,
+            message: `Email sending failed: ${error}`,
+          },
           500
         );
       }
 
       if (!success) {
-        return c.json({ error: `Failed to send email.` }, 500);
+        return c.json({
+          status: RegistrationStatus.EMAIL_SEND_FAILED,
+          message: "Failed to send verification email",
+        });
       }
-      console.log("Registration process completed successfully");
-      return c.json({ message: "Verification code sent successfully" }, 200);
+      return c.json(
+        {
+          status: RegistrationStatus.SUCCESS,
+          message: "Registration successful. Verification code sent.",
+          userId,
+        },
+        200
+      );
     } catch (error) {
       return c.json(
         {
-          error: `An unexpected error occurred during sending the verification code: ${error}`,
+          status: RegistrationStatus.UNEXPECTED_ERROR,
+          message: `Unexpected error during registration: ${error}`,
         },
         500
       );

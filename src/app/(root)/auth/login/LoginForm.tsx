@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import Loading from "@/app/loading";
+import { LogoWithText } from "@/components/icons/logo";
 import { ThemeToggle } from "@/components/theme/toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,45 +70,56 @@ export default function LoginForm() {
   }
 
   return (
-    <>
-      <Link
-        href="/auth/login"
-        className="absolute left-8 top-8 flex items-center gap-2 text-sm font-medium"
-      >
-        <ArrowLeft weight="bold" size={20} />
-        Home
-      </Link>
-      <div className="absolute right-8 top-8 flex items-center gap-2">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="absolute top-4 left-4 right-4 flex justify-between">
+        <Link
+          href="/auth/login"
+          className="flex items-center gap-2 text-sm font-medium"
+        >
+          <ArrowLeft weight="bold" size={16} />
+          Home
+        </Link>
         <ThemeToggle />
       </div>
-      <div className="flex w-full justify-center py-[150px]">
-        <div className="flex min-w-[650px] flex-col gap-4">
-          <h1 className="text-3xl font-black">Sign into Vishwas</h1>
-          <p className="mb-3">
+
+      <div className="w-full max-w-xl p-6 md:p-10">
+        <div className="text-center mb-6">
+          <div className="flex justify-center mb-2">
+            <LogoWithText width={130} />
+          </div>
+          <h1 className="text-xl font-bold mb-1">Sign in</h1>
+          <p className="text-muted-foreground">
             Don{"'"}t have an account?{" "}
-            <Link href="/auth/register" className="text-blue-500">
-              Sign up
-            </Link>
-            .
-          </p>
-          <Form {...signInForm}>
-            <form
-              onSubmit={signInForm.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
+            <Link
+              href="/auth/register"
+              className="text-primary hover:underline"
             >
+              Register
+            </Link>
+          </p>
+        </div>
+
+        <Form {...signInForm}>
+          <form onSubmit={signInForm.handleSubmit(onSubmit)}>
+            <div className="space-y-4">
               <FormField
                 control={signInForm.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="john.doe@example.com" {...field} />
+                      <Input
+                        placeholder="you@example.com"
+                        className="w-full"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={signInForm.control}
                 name="password"
@@ -144,27 +156,32 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
+            </div>
+
+            {/* Submit Section */}
+            <div className="col-span-full mt-6 text-center">
               <Button
                 type="submit"
-                className="mt-4"
+                size="lg"
+                className="w-full md:w-auto px-12"
                 disabled={mutation.isPending}
               >
                 {mutation.isPending ? <Loading size={24} /> : "Sign In"}
               </Button>
-            </form>
-          </Form>
-          <p className="mt-4 text-sm">
-            By signing in, you agree to our{" "}
-            <Link href={"#"} className="text-blue-500">
-              terms
-            </Link>
-            , {"and "}
-            <Link href={"#"} className="text-blue-500">
-              privacy policy
-            </Link>
-          </p>
-        </div>
+              <p className="mt-4 text-sm text-muted-foreground">
+                By signing in, you agree to our{" "}
+                <Link href="#" className="text-primary hover:underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="#" className="text-primary hover:underline">
+                  Privacy Policy
+                </Link>
+              </p>
+            </div>
+          </form>
+        </Form>
       </div>
-    </>
+    </div>
   );
 }
