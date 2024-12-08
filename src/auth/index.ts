@@ -11,6 +11,9 @@ export const lucia = new Lucia(adapter, {
   sessionCookie: {
     name: "vishwas-session",
     expires: false,
+    attributes: {
+      secure: true,
+    },
   },
   getSessionAttributes: (/* attributes */) => {
     return {};
