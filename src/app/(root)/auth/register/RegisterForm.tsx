@@ -131,7 +131,7 @@ export default function RegisterForm() {
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-6xl p-6 md:p-10">
+      <div className="w-full max-w-6xl p-6 pt-[100px] md:p-10 md:pt-[50px]">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-2">
             <LogoWithText width={130} />
