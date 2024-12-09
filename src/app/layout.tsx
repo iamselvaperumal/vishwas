@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 
 import { Toaster } from "@/components/ui/sonner";
-import { PatientProvider } from "@/context/patient-context";
 
 export const metadata: Metadata = {
   description: siteConfig.description,
@@ -48,7 +47,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <QueryProvider>
-              <PatientProvider>{children}</PatientProvider>
+              {children}
               <Toaster richColors expand position="bottom-right" />
             </QueryProvider>
           </ThemeProvider>

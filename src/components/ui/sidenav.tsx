@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { Analytics, Patient, Settings } from "../icons/nav-icons";
 
-export function Nav() {
+export function SideNav() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
