@@ -7,9 +7,9 @@ export default async function Home() {
   const user = await getUser();
 
   if (user?.role === "farmer") {
-    redirect("/farmer");
+    redirect("/farmer/dashboard");
   } else if (user?.role === "consumer") {
-    redirect("/consumer");
+    redirect("/consumer/dashboard");
   }
 
   return (

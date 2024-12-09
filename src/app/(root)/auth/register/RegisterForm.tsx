@@ -61,6 +61,8 @@ export default function RegisterForm() {
     },
   });
 
+  const currentRole = signUpForm.watch("role");
+
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof registrationSchema>) =>
       await client.api.v1.auth.register["send-verification-code"].$post({
@@ -115,6 +117,9 @@ export default function RegisterForm() {
   });
 
   async function onSubmit(values: z.infer<typeof registrationSchema>) {
+    if (values.role !== "farmer") {
+      values.landRegistrationNumber = "";
+    }
     mutation.mutate(values);
   }
 
@@ -268,22 +273,24 @@ export default function RegisterForm() {
 
             {/* Second Column */}
             <div className="space-y-4">
-              <FormField
-                control={signUpForm.control}
-                name="landRegistrationNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Land Registration Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter land registration number"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {currentRole === "farmer" && (
+                <FormField
+                  control={signUpForm.control}
+                  name="landRegistrationNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Land Registration Number</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter land registration number"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <FormField
                 control={signUpForm.control}
@@ -294,7 +301,13 @@ export default function RegisterForm() {
                     <FormControl>
                       <Textarea
                         placeholder="Enter your complete address"
-                        className="min-h-[128px] max-h-[128px]"
+                        className={`
+                          ${
+                            currentRole === "farmer"
+                              ? "min-h-[128px] max-h-[128px]"
+                              : "min-h-[216px] max-h-[216px]"
+                          }
+                        `}
                         {...field}
                       />
                     </FormControl>

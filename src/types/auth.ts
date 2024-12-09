@@ -1,3 +1,5 @@
+import { User } from "lucia";
+
 export enum RegistrationStatus {
   SUCCESS = "SUCCESS",
   EMAIL_ALREADY_VERIFIED = "EMAIL_ALREADY_VERIFIED",
@@ -11,3 +13,7 @@ export enum RegistrationStatus {
   VALIDATION_ERROR = "VALIDATION_ERROR",
   UNEXPECTED_ERROR = "UNEXPECTED_ERROR",
 }
+
+export type UserProps = {
+  user: User | null;
+};

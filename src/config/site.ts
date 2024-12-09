@@ -10,6 +10,6 @@ export const siteConfig = {
     },
   ],
   links: {
-    web: "https://localhost:3000",
+    web: "https://thevishwas.vercel.app/",
   },
 };

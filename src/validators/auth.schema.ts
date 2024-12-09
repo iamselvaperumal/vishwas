@@ -4,36 +4,73 @@ export const registrationSchema = z
   .object({
     name: z
       .string()
-      .min(2, { message: "Name must be at least 2 characters long" }),
-    email: z.string().email({ message: "Please enter a valid email address" }),
-    role: z.enum(["farmer", "consumer"]),
+      .trim()
+      .min(2, { message: "Name must be at least 2 characters long" })
+      .max(100, { message: "Name must be less than 100 characters" }),
+    email: z
+      .string()
+      .trim()
+      .email({ message: "Please enter a valid email address" }),
+    role: z.enum(["farmer", "consumer"], {
+      errorMap: () => ({ message: "Please select a role" }),
+    }),
     phone: z
       .string()
+      .trim()
       .regex(/^\d+$/, { message: "Phone number must contain only digits" })
-      .min(10, { message: "Phone number must be 10 digits long" })
-      .max(10, { message: "Phone number must be 10 digits long" }),
+      .length(10, { message: "Phone number must be exactly 10 digits long" }),
     aadhaar: z
       .string()
-      .regex(/^\d+$/, { message: "Invalid Aadhaar ID" })
-      .min(12, { message: "Aadhaar ID must be 12 digits long" })
-      .max(12, { message: "Aadhaar ID must be 12 digits long" }),
+      .trim()
+      .regex(/^\d+$/, { message: "Aadhaar number must contain only digits" })
+      .length(12, { message: "Aadhaar number must be exactly 12 digits long" }),
     landRegistrationNumber: z
-      .string()
-      .min(10, { message: "Invalid Land Registration Number" }),
+      .union([
+        z.string().trim().min(10, {
+          message:
+            "Land registration number must be at least 10 characters long",
+        }),
+        z.literal(""), // Allow empty string for non-farmers
+      ])
+      .optional(),
     address: z
       .string()
-      .min(20, { message: "Address must be at least 20 characters long" }),
+      .trim()
+      .min(20, { message: "Address must be at least 20 characters long" })
+      .max(500, { message: "Address must be less than 500 characters" }),
     password: z
       .string()
-      .min(6, { message: "Password must be at least 8 characters long" }),
-    confirmPassword: z
-      .string()
-      .min(6, { message: "Please confirm your password" }),
+      .trim()
+      .min(6, { message: "Password must be at least 6 characters long" }),
+    confirmPassword: z.string().trim().min(6, {
+      message: "Confirmation password must be at least 6 characters long",
+    }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Password and confirmation password do not match",
-    path: ["confirmPassword"],
+  .superRefine((data, ctx) => {
+    // Validate land registration number for farmers
+    if (data.role === "farmer") {
+      const landRegNumber = data.landRegistrationNumber;
+      if (!landRegNumber || landRegNumber.trim() === "") {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Land registration number is required for farmers",
+          path: ["landRegistrationNumber"],
+        });
+      }
+    }
+
+    // Validate password match
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Password and confirmation password do not match",
+        path: ["confirmPassword"],
+      });
+    }
   });
+
+// Infer the TypeScript type for the schema
+export type RegistrationFormData = z.infer<typeof registrationSchema>;
 
 export const verificationCodeSchema = z.object({
   email: z.string().email().optional(),

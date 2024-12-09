@@ -18,7 +18,7 @@ export const users = pgTable(
     email: text("email").unique().notNull(),
     phone: text("phone").unique(),
     aadhaar: text("aadhaar_number").unique(),
-    landRegistrationNumber: text("land_registration_number").unique(),
+    landRegistrationNumber: text("land_registration_number"),
     address: text("address"),
     role: text("role").default("farmer"),
     emailVerified: boolean("email_verified").default(false).notNull(),
