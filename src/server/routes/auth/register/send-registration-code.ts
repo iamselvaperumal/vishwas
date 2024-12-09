@@ -170,7 +170,10 @@ export const sendRegistrationCode = new OpenAPIHono<{
           );
         }
 
-        if (existingUser.landRegistrationNumber === landRegistrationNumber) {
+        if (
+          role === "farmer" &&
+          existingUser.landRegistrationNumber === landRegistrationNumber
+        ) {
           return c.json(
             {
               status: RegistrationStatus.LAND_REGISTRATION_ALREADY_USED,
@@ -194,7 +197,8 @@ export const sendRegistrationCode = new OpenAPIHono<{
               role: role,
               phone: phone,
               aadhaar: aadhaar,
-              landRegistrationNumber: landRegistrationNumber,
+              landRegistrationNumber:
+                role === "farmer" ? landRegistrationNumber : null,
               address: address,
               hashedPassword: hashedPassword,
               emailVerified: false,
@@ -210,7 +214,8 @@ export const sendRegistrationCode = new OpenAPIHono<{
               name,
               phone,
               aadhaar,
-              landRegistrationNumber,
+              landRegistrationNumber:
+                role === "farmer" ? landRegistrationNumber : null,
               address,
               hashedPassword,
               emailVerified: false,
