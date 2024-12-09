@@ -8,11 +8,9 @@ export default async function Layout({
 }) {
   const user = await getUser();
   return (
-    <>
-      <div className="grid grid-cols-1 lg:grid-cols-2">
-        <SideNav user={user} />
-        <div>{children}</div>
-      </div>
-    </>
+    <div className="flex">
+      <SideNav user={user} />
+      <main className="flex-1 pt-20 lg:pt-0 pb-16 lg:pb-0">{children}</main>
+    </div>
   );
 }
