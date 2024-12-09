@@ -83,15 +83,42 @@ export const sendRegistrationCode = new OpenAPIHono<{
         role,
       } = c.req.valid("json");
 
+      if (role === "farmer" && !landRegistrationNumber) {
+        return c.json(
+          {
+            status: RegistrationStatus.VALIDATION_ERROR,
+            message: "Land registration number is required for farmers",
+          },
+          400
+        );
+      }
+
+      if (role !== "farmer" && landRegistrationNumber) {
+        return c.json(
+          {
+            status: RegistrationStatus.VALIDATION_ERROR,
+            message: "Land registration number is only allowed for farmers",
+          },
+          400
+        );
+      }
+
       let existingUser;
       try {
-        existingUser = await db.query.users.findFirst({
-          where: or(
-            eq(users.email, email),
-            eq(users.phone, phone),
-            eq(users.aadhaar, aadhaar),
+        const queryConditions = [
+          eq(users.email, email),
+          eq(users.phone, phone),
+          eq(users.aadhaar, aadhaar),
+        ];
+
+        if (role === "farmer" && landRegistrationNumber) {
+          queryConditions.push(
             eq(users.landRegistrationNumber, landRegistrationNumber)
-          ),
+          );
+        }
+
+        existingUser = await db.query.users.findFirst({
+          where: or(...queryConditions),
         });
       } catch (error) {
         return c.json(
