@@ -83,7 +83,7 @@ export default function SideNav({ user }: UserProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex flex-col h-screen w-[250px] border-t border-r p-4">
+      <div className="hidden lg:flex flex-col h-screen w-[200px] border-t border-r p-4">
         <Link href={"/"} className="mb-8">
           <LogoWithText width={110} className="inline" />
         </Link>

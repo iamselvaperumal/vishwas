@@ -26,6 +26,7 @@ export const lucia = new Lucia(adapter, {
       aadhaar: attributes.aadhaar,
       role: attributes.role,
       landRegistrationNumber: attributes.landRegistrationNumber,
+      address: attributes.address,
       email: attributes.email,
       emailVerified: attributes.emailVerified,
       avatar: attributes.avatar,

@@ -1,7 +1,11 @@
-export default function Settings() {
+import { getUser } from "@/server/actions";
+import SettingsForm from "./settings-form";
+
+export default async function Settings() {
+  const user = await getUser();
   return (
-    <div>
-      <h1>Settings</h1>
-    </div>
+    <>
+      <SettingsForm user={user} />
+    </>
   );
 }
