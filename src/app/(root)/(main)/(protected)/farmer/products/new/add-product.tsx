@@ -27,12 +27,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Bank, ClipboardText, Images, StackPlus } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export default function AddProductForm({ user }: UserProps) {
+  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
   const defaultValues = {
@@ -68,8 +70,8 @@ export default function AddProductForm({ user }: UserProps) {
     },
     onSuccess: () => {
       toast.success("Added product successfully");
-      addProductForm.reset(defaultValues);
       setSelectedProduct(null);
+      router.push("/farmer/products");
     },
     onError: (error: Error) => {
       toast.error("Failed to add product");
