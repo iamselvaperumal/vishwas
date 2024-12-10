@@ -35,25 +35,27 @@ import { z } from "zod";
 export default function AddProductForm({ user }: UserProps) {
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
 
+  const defaultValues = {
+    name: "",
+    farmSize: undefined,
+    expectedYield: undefined,
+    harvestMonth: "",
+    harvestYear: undefined,
+    minimumPrice: undefined,
+    sellingMethod: undefined,
+    availableQuantity: undefined,
+    soilType: undefined,
+    waterSource: undefined,
+    fertilizerType: undefined,
+    pestManagement: undefined,
+    paymentMode: undefined,
+    deliveryMode: undefined,
+    contractDuration: undefined,
+  };
+
   const addProductForm = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
-    defaultValues: {
-      name: "",
-      farmSize: "",
-      expectedYield: "",
-      harvestMonth: "",
-      harvestYear: undefined,
-      minimumPrice: "",
-      sellingMethod: undefined,
-      availableQuantity: "",
-      soilType: undefined,
-      waterSource: undefined,
-      fertilizerType: undefined,
-      pestManagement: undefined,
-      paymentMode: undefined,
-      deliveryMode: undefined,
-      contractDuration: undefined,
-    },
+    defaultValues,
   });
 
   const sellingType = addProductForm.watch("sellingMethod");
@@ -66,7 +68,7 @@ export default function AddProductForm({ user }: UserProps) {
     },
     onSuccess: () => {
       toast.success("Added product successfully");
-      addProductForm.reset();
+      addProductForm.reset(defaultValues);
       setSelectedProduct(null);
     },
     onError: (error: Error) => {
