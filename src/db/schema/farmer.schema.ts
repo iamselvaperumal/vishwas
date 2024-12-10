@@ -1,3 +1,5 @@
+import { PurchaseRequestData } from "@/types/farmer";
+import { eq } from "drizzle-orm";
 import {
   decimal,
   index,
@@ -8,6 +10,7 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
+import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { users } from "./user.schema";
 
 export const soilTypeEnum = pgEnum("soil_type", [
@@ -33,6 +36,15 @@ export const pestManagementEnum = pgEnum("pest_management", [
   "organic",
   "chemical",
   "none",
+]);
+
+export const transactionStatusEnum = pgEnum("transaction_status", [
+  "pending_approval",
+  "approved",
+  "rejected",
+  "payment_pending",
+  "completed",
+  "cancelled",
 ]);
 
 export const contractDurationEnum = pgEnum("contract_duration", [
@@ -100,12 +112,70 @@ export const transactions = pgTable("transactions", {
     .notNull(),
   quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
   totalPrice: decimal("total_price", { precision: 10, scale: 2 }).notNull(),
-  status: text("status").default("pending"),
+  status: transactionStatusEnum("status").default("pending_approval"),
+  buyerMessage: text("buyer_message"),
+  farmerNote: text("farmer_note"),
+  requestedAt: timestamp("requested_at").defaultNow().notNull(),
+  approvedAt: timestamp("approved_at"),
+  completedAt: timestamp("completed_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(
     () => new Date()
   ),
 });
+
+export const transactionMethods = {
+  createPurchaseRequest: async (
+    client: PostgresJsDatabase,
+    data: PurchaseRequestData
+  ) => {
+    return client.insert(transactions).values({
+      ...data,
+      status: (data.status ?? "pending_approval") as any,
+      requestedAt: new Date(),
+      createdAt: new Date(),
+    } as any);
+  },
+
+  approvePurchase: async (
+    client: PostgresJsDatabase,
+    transactionId: string
+  ) => {
+    return client
+      .update(transactions)
+      .set({
+        status: "approved",
+        approvedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(transactions.id, transactionId));
+  },
+
+  rejectPurchase: async (client: PostgresJsDatabase, transactionId: string) => {
+    return client
+      .update(transactions)
+      .set({
+        status: "rejected",
+        approvedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(transactions.id, transactionId));
+  },
+
+  completeTransaction: async (
+    client: PostgresJsDatabase,
+    transactionId: string
+  ) => {
+    return client
+      .update(transactions)
+      .set({
+        status: "completed",
+        completedAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .where(eq(transactions.id, transactionId));
+  },
+};
 
 export type Transaction = typeof transactions.$inferSelect;
 export type NewTransaction = typeof transactions.$inferInsert;
