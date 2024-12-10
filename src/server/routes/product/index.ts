@@ -1,9 +1,9 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 
 import { ContextVariables } from "@/types/hono";
-import { farmer } from "./farmer";
+import { product } from "./product";
 
-export const farmerApp = new OpenAPIHono<{
+export const productApp = new OpenAPIHono<{
   Variables: ContextVariables;
 }>()
   .use(async (c, next) => {
@@ -18,4 +18,4 @@ export const farmerApp = new OpenAPIHono<{
 
     return next();
   })
-  .route("/", farmer);
+  .route("/", product);

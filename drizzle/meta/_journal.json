@@ -15,6 +15,34 @@
       "when": 1733832951641,
       "tag": "0001_silly_lake",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1733834920656,
+      "tag": "0002_fuzzy_piledriver",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1733835012567,
+      "tag": "0003_great_nightshade",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1733849717145,
+      "tag": "0004_fluffy_shriek",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1733850851167,
+      "tag": "0005_magenta_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }

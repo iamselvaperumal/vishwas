@@ -9,6 +9,7 @@ import { lucia } from "@/auth";
 import { ContextVariables } from "@/types/hono";
 
 import { authApp } from "./routes/auth";
+import { productApp } from "./routes/product";
 import { secretApp } from "./routes/secret";
 
 const app = new OpenAPIHono<{ Variables: ContextVariables }>().basePath(
@@ -71,7 +72,10 @@ app.get(
   })
 );
 
-const routes = app.route("/", authApp).route("/", secretApp);
+const routes = app
+  .route("/", authApp)
+  .route("/", productApp)
+  .route("/", secretApp);
 
 export type AppType = typeof routes;
 

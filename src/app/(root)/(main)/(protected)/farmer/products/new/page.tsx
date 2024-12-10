@@ -1,9 +1,15 @@
+import Loading from "@/app/loading";
+import { getUser } from "@/server/actions";
+import { Suspense } from "react";
 import AddProductForm from "./add-product";
 
-export default function AddNewProduct() {
+export default async function AddNewProduct() {
+  const user = await getUser();
   return (
     <>
-      <AddProductForm />
+      <Suspense fallback={<Loading showText={true} />}>
+        <AddProductForm user={user} />
+      </Suspense>
     </>
   );
 }

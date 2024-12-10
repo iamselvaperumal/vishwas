@@ -59,7 +59,7 @@ export const waterSourceEnum = pgEnum("water_source", [
   "river",
 ]);
 
-export const paymentModeEnum = pgEnum("payment_mode", ["online", "direct"]);
+export const paymentModeEnum = pgEnum("payment_mode", ["online", "cash"]);
 
 export const deliveryModeEnum = pgEnum("delivery_mode", ["pickup", "delivery"]);
 
@@ -80,7 +80,10 @@ export const products = pgTable(
       scale: 2,
     }).notNull(),
     contractDuration: contractDurationEnum("contract_duration"),
-    availableQuantity: text("available_quantity").notNull(),
+    availableQuantity: decimal("available_quantity", {
+      precision: 10,
+      scale: 2,
+    }).notNull(),
     soilType: soilTypeEnum("soil_type").notNull(),
     waterSource: waterSourceEnum("water_source").notNull(),
     fertilizerType: fertilizerTypeEnum("fertilizer_type").notNull(),
@@ -88,7 +91,10 @@ export const products = pgTable(
     paymentMode: paymentModeEnum("payment_mode").notNull(),
     deliveryMode: deliveryModeEnum("delivery_mode").notNull(),
     sellingMethod: sellingMethodEnum("selling_method").notNull(),
-    status: text("status").default("active"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).$onUpdate(
+      () => new Date()
+    ),
   },
   (table) => ({
     productIdx: index("product_idx").on(table.id),

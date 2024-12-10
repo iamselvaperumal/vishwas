@@ -10,7 +10,9 @@ export default async function Layout({
   return (
     <div className="flex">
       <SideNav user={user} />
-      <main className="flex-1 pt-20 pb-28 lg:pt-0 lg:pb-0">{children}</main>
+      <main className="flex-1 pt-20 pb-28 pl-0 lg:pl-[200px] lg:pt-0 lg:pb-0">
+        {children}
+      </main>
     </div>
   );
 }

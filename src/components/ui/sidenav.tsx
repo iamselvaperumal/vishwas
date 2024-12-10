@@ -84,7 +84,7 @@ export default function SideNav({ user }: UserProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex flex-col h-screen w-[200px] border-t border-r p-4">
+      <div className="hidden lg:flex flex-col h-screen w-[200px] border-t border-r p-4 fixed top-0 left-0 bottom-0">
         <Link href={"/"} className="mb-8" title="Vishwas Logo">
           <LogoWithText width={100} className="inline" />
         </Link>
@@ -122,7 +122,7 @@ export default function SideNav({ user }: UserProps) {
                   className="w-6 h-6 min-w-6 min-h-6 mr-4"
                 />
                 <span
-                  className="text-sm overflow-hidden text-ellipsis whitespace-nowrap"
+                  className="text-sm overflow-hidden text-ellipsis whitespace-nowrap text-zinc-800 dark:text-zinc-300"
                   title={user?.name ?? ""}
                 >
                   {user?.name ?? ""}
