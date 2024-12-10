@@ -19,6 +19,7 @@ import Loading from "@/app/loading";
 import { logout } from "@/server/actions";
 import { UserProps } from "@/types/auth";
 import { Button } from "./button";
+import { GradientAvatar } from "./gradient-avatar";
 
 export default function SideNav({ user }: UserProps) {
   const pathname = usePathname();
@@ -85,7 +86,7 @@ export default function SideNav({ user }: UserProps) {
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex flex-col h-screen w-[200px] border-t border-r p-4">
         <Link href={"/"} className="mb-8">
-          <LogoWithText width={110} className="inline" />
+          <LogoWithText width={100} className="inline" />
         </Link>
         <nav className="flex flex-col flex-1 text-sm gap-8 py-3">
           {mounted &&
@@ -113,6 +114,20 @@ export default function SideNav({ user }: UserProps) {
         <nav className="flex flex-col text-sm gap-8 py-3 mb-8">
           {mounted && (
             <>
+              <div className="flex items-center overflow-hidden mb-2">
+                <GradientAvatar
+                  text={user?.name ?? ""}
+                  showInitials={false}
+                  className="w-6 h-6 min-w-6 min-h-6 mr-4"
+                />
+                <span
+                  className="text-sm overflow-hidden text-ellipsis whitespace-nowrap"
+                  title={user?.name ?? ""}
+                >
+                  {user?.name ?? ""}
+                </span>
+              </div>
+
               <button
                 type="button"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -156,7 +171,10 @@ export default function SideNav({ user }: UserProps) {
                 }}
               >
                 {loading ? (
-                  <Loading />
+                  <>
+                    <Loading className="mr-4" />
+                    Loading...
+                  </>
                 ) : (
                   <>
                     <Logout width={24} height={24} className="mr-4" />
@@ -175,7 +193,7 @@ export default function SideNav({ user }: UserProps) {
           <Link href="/" className="flex items-center">
             <LogoWithText width={110} />
           </Link>
-          <div className="flex items-center space-x-10">
+          <div className="flex items-center space-x-6">
             <button
               type="button"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -202,7 +220,7 @@ export default function SideNav({ user }: UserProps) {
                 fill-zinc-800 dark:fill-zinc-300
                 hover:text-green-600 dark:hover:text-green-500
                 hover:fill-green-600 dark:hover:fill-green-500
-                transition-colors duration-200 hover:bg-transparent !mr-2
+                transition-colors duration-200 hover:bg-transparent
               "
               onClick={async () => {
                 setLoading(true);
@@ -212,6 +230,11 @@ export default function SideNav({ user }: UserProps) {
             >
               {loading ? <Loading /> : <Logout width={24} height={24} />}
             </Button>
+            <GradientAvatar
+              text={user?.name ?? ""}
+              maxInitials={1}
+              className="w-6 h-6 min-w-6 min-h-6 !mr-2"
+            />
           </div>
         </div>
       </div>

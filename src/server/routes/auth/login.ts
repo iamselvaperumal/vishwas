@@ -6,7 +6,7 @@ import { and, eq } from "drizzle-orm";
 
 import { lucia } from "@/auth";
 import db from "@/db";
-import { loginSchema } from "@/validators/auth.schema";
+import { loginSchema } from "@/validators/auth.validator";
 import { Argon2id } from "oslo/password";
 
 export const login = new OpenAPIHono<{

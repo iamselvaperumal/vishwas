@@ -6,9 +6,9 @@ import { UserProps } from "@/types/auth";
 export default function SettingsForm({ user }: UserProps) {
   return (
     <>
-      <div className="p-4">
+      <div className="p-4 lg:px-8">
         <h1 className="text-xl font-bold mb-8">User Information</h1>
-        <div className="grid md:grid-cols-2 gap-8 px-8">
+        <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-8">
             <div className="flex flex-col">
               <Label htmlFor="name" className="mb-4">
@@ -90,7 +90,7 @@ export default function SettingsForm({ user }: UserProps) {
 
             <div className="flex flex-col">
               <Label htmlFor="address" className="mb-4">
-                Role
+                Full Address
               </Label>
               <Textarea
                 placeholder="Enter your complete address"

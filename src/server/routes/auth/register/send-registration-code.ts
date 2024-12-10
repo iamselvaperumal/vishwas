@@ -4,7 +4,7 @@ import { users } from "@/db/schema";
 import { eq, or } from "drizzle-orm";
 
 import db from "@/db";
-import { registrationSchema } from "@/validators/auth.schema";
+import { registrationSchema } from "@/validators/auth.validator";
 import { Argon2id } from "oslo/password";
 
 import { EmailTemplate, sendMail } from "@/lib/email";

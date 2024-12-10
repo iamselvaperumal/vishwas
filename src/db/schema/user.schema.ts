@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -9,6 +10,8 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { sessions } from "./session.schema";
+
+export const userRoleEnum = pgEnum("user_role", ["farmer", "consumer"]);
 
 export const users = pgTable(
   "users",
@@ -20,7 +23,7 @@ export const users = pgTable(
     aadhaar: text("aadhaar_number").unique(),
     landRegistrationNumber: text("land_registration_number"),
     address: text("address"),
-    role: text("role").default("farmer"),
+    role: userRoleEnum("role").default("farmer").notNull(),
     emailVerified: boolean("email_verified").default(false).notNull(),
     hashedPassword: text("hashed_password"),
     avatar: text("avatar"),
