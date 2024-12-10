@@ -346,7 +346,6 @@ export const product = new OpenAPIHono<{
               productData.deliveryMode || existingProduct.deliveryMode,
             sellingMethod:
               productData.sellingMethod || existingProduct.sellingMethod,
-            status: productData.status || existingProduct.status,
           })
           .where(eq(products.id, id))
           .returning({
@@ -366,7 +365,6 @@ export const product = new OpenAPIHono<{
             paymentMode: products.paymentMode,
             deliveryMode: products.deliveryMode,
             sellingMethod: products.sellingMethod,
-            status: products.status,
           });
 
         return c.json({
