@@ -55,7 +55,7 @@ export const GradientAvatar: FC<GradientAvatarProps> = ({
   return (
     <div
       className={clsx(
-        "flex items-center justify-center w-12 h-12 rounded-full text-white font-bold",
+        "flex items-center justify-center w-12 h-12 rounded-full  font-semibold font-sans",
         className
       )}
       style={{ background: gradient, ...style }}
