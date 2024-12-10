@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { StackPlus } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 
 export default function Products() {
@@ -11,6 +12,7 @@ export default function Products() {
     <div className="p-4 lg:px-8">
       <div className="flex flex-1 justify-end">
         <Button variant={"outline"} onClick={handleAddProduct}>
+          <StackPlus size={20} className="mr-4" />
           Add New Product
         </Button>
       </div>

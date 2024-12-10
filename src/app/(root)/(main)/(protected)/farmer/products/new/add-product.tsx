@@ -1,8 +1,7 @@
 export default function AddProductForm() {
   return (
     <div className="p-4 lg:px-8">
-      <h1>Add Product</h1>
-      {/* Form goes here */}
+      <h1 className="text-xl font-bold mb-8">Add a new product</h1>
     </div>
   );
 }

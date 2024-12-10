@@ -1,1 +1,0 @@
-ALTER TABLE "users" DROP CONSTRAINT "users_land_registration_number_unique";

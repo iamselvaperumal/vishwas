@@ -85,7 +85,7 @@ export default function SideNav({ user }: UserProps) {
     <>
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex flex-col h-screen w-[200px] border-t border-r p-4">
-        <Link href={"/"} className="mb-8">
+        <Link href={"/"} className="mb-8" title="Vishwas Logo">
           <LogoWithText width={100} className="inline" />
         </Link>
         <nav className="flex flex-col flex-1 text-sm gap-8 py-3">
@@ -94,6 +94,7 @@ export default function SideNav({ user }: UserProps) {
               <Link
                 href={menu.path}
                 key={index}
+                title={menu.name}
                 className={`
                 flex flex-row items-center 
                 transition-colors duration-200 
@@ -190,7 +191,7 @@ export default function SideNav({ user }: UserProps) {
       {/* Mobile Top Bar */}
       <div className="fixed top-0 left-0 right-0 lg:hidden z-50 bg-white dark:bg-zinc-900 border-b dark:border-zinc-800 shadow-sm">
         <div className="flex justify-between items-center p-4">
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center" title="Vishwas Logo">
             <LogoWithText width={110} />
           </Link>
           <div className="flex items-center space-x-6">
