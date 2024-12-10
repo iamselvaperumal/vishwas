@@ -99,7 +99,7 @@ export default function AddProductForm({ user }: UserProps) {
                     src={`/static/images/${selectedProduct}.jpg`}
                     alt={selectedProduct}
                     fill
-                    className="z-20 h-full w-full rounded-sm object-cover"
+                    className="h-full w-full rounded-sm object-cover"
                   />
                 </div>
               ) : (

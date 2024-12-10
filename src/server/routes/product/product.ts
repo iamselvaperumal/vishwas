@@ -143,7 +143,7 @@ export const product = new OpenAPIHono<{
           orderBy: desc(products.createdAt),
         });
 
-        return c.json({ productList }, 200);
+        return c.json({ productList: productList }, 200);
       } catch (error) {
         console.error("Error adding product:", error);
         return c.json(
